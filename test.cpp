@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <chrono>
 
 #define arr_elem 10000000
 
@@ -20,17 +21,23 @@ int main(int argc, char const* argv[])
 
 #pragma acc enter data create(array[0:arr_elem],sum)
 
+auto start = std::chrono::high_resolution_clock::now();
 #pragma acc parallel loop present(array[0:arr_elem])
     for (int i = 0; i < arr_elem; ++i)
     {
         array[i] = sin(2*pi*i/arr_elem);
     }
+auto elapsed = std::chrono::high_resolution_clock::now() - start;
+long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+std::cout << "Result_S: " << microseconds << std::endl;
+
 
 #pragma acc parallel loop present(array[0:arr_elem],sum) reduction(+:sum)
     for (int i = 0; i < arr_elem; ++i)
     {
         sum += array[i];
     }
+
 
 #pragma acc exit data delete(array[0:arr_elem]) copyout(sum)
 
