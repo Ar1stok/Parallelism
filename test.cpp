@@ -43,5 +43,7 @@ std::cout << "Result_S: " << microseconds << std::endl;
 
     std::cout << sum << std::endl;
 
+    free(array);
+    
     return 0;
 }
